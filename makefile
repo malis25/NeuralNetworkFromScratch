@@ -9,7 +9,7 @@ all: build
 build:
 	$(CXX) $(CXXFLAGS) -c math/Matrix.cpp -o Matrix.o
 	$(CXX) $(CXXFLAGS) -c math/Activations.cpp -o Activations.o
-	$(CXX) $(CXXFLAGS) -c math/MLP.cpp -o MLP.o
+	$(CXX) $(CXXFLAGS) -c MLP.cpp -o MLP.o
 	$(CXX) $(CXXFLAGS) -c main.cpp -o main.o
 	$(CXX) $(CXXFLAGS) Matrix.o Activations.o MLP.o main.o -o main.exe
 

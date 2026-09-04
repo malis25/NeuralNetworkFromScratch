@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 #include <math/Activations.h>
-#include <math/MLP.h>
+#include <MLP.h>
 
 MLP::MLP(const std::vector<size_t>& layerSizes)
 {

@@ -1,9 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "math/MLP.h"
-
-using namespace std;
+#include <MLP.h>
 
 int main() {
     MLP network({2, 4, 1});
