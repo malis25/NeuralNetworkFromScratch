@@ -8,6 +8,9 @@ using namespace std;
 int main() {
     MLP network({2, 4, 1});
 
+    size_t epochs;
+    double learningRate;
+
     std::vector<Matrix> inputs(4, Matrix(2, 1));
     inputs[0] = {0.0, 0.0};
     inputs[1] = {0.0, 1.0};
@@ -20,7 +23,13 @@ int main() {
     targets[2] = {1.0};
     targets[3] = {0.0};
 
-    network.Train(inputs, targets, 10000, 0.1);
+    std::cout << "Enter the number of epochs: ";
+    std::cin >> epochs;
+
+    std::cout << "Enter the learning rate: ";
+    std::cin >> learningRate;
+
+    network.Train(inputs, targets, epochs, learningRate);
 
     for (size_t sample = 0; sample < inputs.size(); sample++) {
         Matrix prediction = network.Predict(inputs[sample]);

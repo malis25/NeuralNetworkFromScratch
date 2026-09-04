@@ -44,6 +44,12 @@ void MLP::Train(const std::vector<Matrix>& inputs,
                 size_t epochs,
                 double learningRate)
 {
+    std::vector<Matrix> activations;
+    std::vector<Matrix> preActivations;
+
+    activations.reserve(m_Weights.size() + 1);
+    preActivations.reserve(m_Weights.size());
+
     if (inputs.empty() || inputs.size() != targets.size()) {
         throw std::invalid_argument("Inputs and targets must contain the same non-zero number of samples");
     }
@@ -61,10 +67,6 @@ void MLP::Train(const std::vector<Matrix>& inputs,
 
     for (size_t epoch = 0; epoch < epochs; epoch++) {
         for (size_t sample = 0; sample < inputs.size(); sample++) {
-            std::vector<Matrix> activations;
-            std::vector<Matrix> preActivations;
-            activations.reserve(m_Weights.size() + 1);
-            preActivations.reserve(m_Weights.size());
             activations.push_back(inputs[sample]);
 
             for (size_t layer = 0; layer < m_Weights.size(); layer++) {
@@ -96,6 +98,9 @@ void MLP::Train(const std::vector<Matrix>& inputs,
                 m_Weights[layer] = m_Weights[layer] - (learningRate * weightGradient);
                 m_Biases[layer] = m_Biases[layer] - (learningRate * deltas[layer]);
             }
+
+            activations.clear();
+            preActivations.clear();
         }
     }
 }
@@ -107,11 +112,9 @@ Matrix MLP::HadamardProduct(const Matrix& left, const Matrix& right)
     }
 
     Matrix result(left.Rows(), left.Cols());
-    
-    for (size_t row = 0; row < left.Rows(); row++) {
-        for (size_t col = 0; col < left.Cols(); col++) {
-            result(row, col) = left(row, col) * right(row, col);
-        }
+
+    for (size_t i = 0; i < left.Rows() * left.Cols(); i++) {
+        result[i] = left[i] * right[i];
     }
 
     return result;

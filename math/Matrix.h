@@ -13,7 +13,8 @@ public:
     double& operator()(size_t row, size_t col);
     const double& operator()(size_t row, size_t col) const;
 
-    double & operator[](size_t index) { return m_Data[index]; }
+    double& operator[](size_t index) { return m_Data[index]; }
+    const double& operator[](size_t index) const { return m_Data[index]; }
 
     Matrix operator=(const std::initializer_list<double> values);
 
