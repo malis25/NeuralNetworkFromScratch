@@ -12,7 +12,7 @@ double SigmoidDerivative(double x) {
 }
 
 Matrix Sigmoid(const Matrix& matrix) {
-    Matrix result(matrix.Transpose().Transpose());
+    Matrix result = matrix;
 
     for (size_t i = 0; i < result.Rows() * result.Cols(); i++) {
         result[i] = Sigmoid(result[i]);
@@ -22,10 +22,20 @@ Matrix Sigmoid(const Matrix& matrix) {
 }
 
 Matrix SigmoidDerivative(const Matrix& matrix) {
-    Matrix result(matrix.Transpose().Transpose());
+    Matrix result = matrix;
 
     for (size_t i = 0; i < result.Rows() * result.Cols(); i++) {
         result[i] = SigmoidDerivative(result[i]);
+    }
+
+    return result;
+}
+
+Matrix SigmoidDerivativeFromActivation(const Matrix& activation) {
+    Matrix result = activation;
+
+    for (size_t i = 0; i < result.Rows() * result.Cols(); i++) {
+        result[i] *= 1.0 - result[i];
     }
 
     return result;

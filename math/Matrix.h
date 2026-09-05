@@ -16,13 +16,19 @@ public:
     double& operator[](size_t index) { return m_Data[index]; }
     const double& operator[](size_t index) const { return m_Data[index]; }
 
-    Matrix operator=(const std::initializer_list<double> values);
+    Matrix& operator=(const std::initializer_list<double> values);
 
     Matrix operator+(const Matrix& other) const;
     Matrix operator-(const Matrix& other) const;
     Matrix operator*(const Matrix& other) const;
 
     Matrix operator*(double scalar) const;
+
+    Matrix& operator+=(const Matrix& other);
+    Matrix& operator-=(const Matrix& other);
+
+    Matrix& operator*=(double scalar);
+    Matrix& operator*=(const Matrix& other);
 
     void Randomize();
     Matrix Transpose() const;

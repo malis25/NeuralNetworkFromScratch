@@ -24,7 +24,7 @@ const double& Matrix::operator()(size_t row, size_t col) const
     return m_Data[row * m_Cols + col];
 }
 
-Matrix Matrix::operator=(const std::initializer_list<double> values)
+Matrix& Matrix::operator=(const std::initializer_list<double> values)
 {
     if (values.size() != m_Rows * m_Cols) {
         throw std::invalid_argument("Initializer list size does not match matrix dimensions");
@@ -94,6 +94,53 @@ Matrix Matrix::operator*(double scalar) const
     }
 
     return result;
+}
+
+Matrix& Matrix::operator+=(const Matrix& other)
+{
+    if (m_Rows != other.m_Rows || m_Cols != other.m_Cols) {
+        throw std::invalid_argument("Matrix dimensions must match for addition");
+    }
+
+    for (size_t i = 0; i < m_Data.size(); i++) {
+        m_Data[i] += other.m_Data[i];
+    }
+
+    return *this;
+}
+
+Matrix& Matrix::operator-=(const Matrix& other)
+{
+    if (m_Rows != other.m_Rows || m_Cols != other.m_Cols) {
+        throw std::invalid_argument("Matrix dimensions must match for subtraction");
+    }
+
+    for (size_t i = 0; i < m_Data.size(); i++) {
+        m_Data[i] -= other.m_Data[i];
+    }
+
+    return *this;
+}
+
+Matrix& Matrix::operator*=(double scalar)
+{
+    for (size_t i = 0; i < m_Data.size(); i++) {
+        m_Data[i] *= scalar;
+    }
+
+    return *this;
+}
+
+Matrix& Matrix::operator*=(const Matrix& other)
+{
+    if (m_Cols != other.m_Rows) {
+        throw std::invalid_argument("Matrix dimensions must match for multiplication");
+    }
+
+    Matrix result = (*this) * other;
+    *this = result;
+
+    return *this;
 }
 
 Matrix Matrix::Transpose() const

@@ -32,9 +32,9 @@ int main() {
     for (size_t sample = 0; sample < inputs.size(); sample++) {
         Matrix prediction = network.Predict(inputs[sample]);
         std::cout << inputs[sample](0, 0) << " XOR " << inputs[sample](1, 0)
-                  << " = " << prediction(0, 0) << std::endl;
+                  << " = " << prediction(0, 0);
 
-        std::cout << "Loss: " << targets[sample](0, 0) - prediction(0, 0) << std::endl;
+        std::cout << " Loss: " << std::abs(targets[sample](0, 0) - prediction(0, 0)) << std::endl;
     }
 
     return 0;

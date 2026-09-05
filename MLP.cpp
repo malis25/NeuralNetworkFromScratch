@@ -10,14 +10,16 @@ MLP::MLP(const std::vector<size_t>& layerSizes)
         throw std::invalid_argument("An MLP needs at least an input and output layer");
     }
 
+    m_Weights.reserve(layerSizes.size() - 1);
+    m_Biases.reserve(layerSizes.size() - 1);
+
     for (size_t layer = 0; layer + 1 < layerSizes.size(); layer++) {
         if (layerSizes[layer] == 0 || layerSizes[layer + 1] == 0) {
             throw std::invalid_argument("MLP layer sizes must be greater than zero");
         }
 
-        Matrix weights(layerSizes[layer + 1], layerSizes[layer]);
-        weights.Randomize();
-        m_Weights.push_back(weights);
+        m_Weights.emplace_back(layerSizes[layer + 1], layerSizes[layer]);
+        m_Weights.back().Randomize();
         m_Biases.emplace_back(layerSizes[layer + 1], 1);
     }
 }
@@ -45,10 +47,14 @@ void MLP::Train(const std::vector<Matrix>& inputs,
                 double learningRate)
 {
     std::vector<Matrix> activations;
-    std::vector<Matrix> preActivations;
+    std::vector<Matrix> deltas;
 
     activations.reserve(m_Weights.size() + 1);
-    preActivations.reserve(m_Weights.size());
+    deltas.reserve(m_Weights.size());
+
+    for (const Matrix& weights : m_Weights) {
+        deltas.emplace_back(weights.Rows(), 1);
+    }
 
     if (inputs.empty() || inputs.size() != targets.size()) {
         throw std::invalid_argument("Inputs and targets must contain the same non-zero number of samples");
@@ -70,37 +76,32 @@ void MLP::Train(const std::vector<Matrix>& inputs,
             activations.push_back(inputs[sample]);
 
             for (size_t layer = 0; layer < m_Weights.size(); layer++) {
-                Matrix preActivation = (m_Weights[layer] * activations.back()) + m_Biases[layer];
-                preActivations.push_back(preActivation);
+                Matrix preActivation = m_Weights[layer] * activations.back();
+                preActivation += m_Biases[layer];
                 activations.push_back(Sigmoid(preActivation));
-            }
-
-            std::vector<Matrix> deltas;
-
-            for (const Matrix& weights : m_Weights) {
-                deltas.emplace_back(weights.Rows(), 1);
             }
 
             size_t outputLayer = m_Weights.size() - 1;
             
             deltas[outputLayer] = HadamardProduct(
                 activations.back() - targets[sample],
-                SigmoidDerivative(preActivations.back()));
+                SigmoidDerivativeFromActivation(activations.back()));
 
             for (size_t layer = outputLayer; layer > 0; layer--) {
                 deltas[layer - 1] = HadamardProduct(
                     m_Weights[layer].Transpose() * deltas[layer],
-                    SigmoidDerivative(preActivations[layer - 1]));
+                    SigmoidDerivativeFromActivation(activations[layer]));
             }
 
             for (size_t layer = 0; layer < m_Weights.size(); layer++) {
                 Matrix weightGradient = deltas[layer] * activations[layer].Transpose();
-                m_Weights[layer] = m_Weights[layer] - (learningRate * weightGradient);
-                m_Biases[layer] = m_Biases[layer] - (learningRate * deltas[layer]);
+                weightGradient *= learningRate;
+                m_Weights[layer] -= weightGradient;
+                deltas[layer] *= learningRate;
+                m_Biases[layer] -= deltas[layer];
             }
 
             activations.clear();
-            preActivations.clear();
         }
     }
 }

@@ -7,3 +7,4 @@ double SigmoidDerivative(double x);
 
 Matrix Sigmoid(const Matrix& matrix);
 Matrix SigmoidDerivative(const Matrix& matrix);
+Matrix SigmoidDerivativeFromActivation(const Matrix& activation);
