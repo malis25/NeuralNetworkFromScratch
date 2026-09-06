@@ -170,3 +170,18 @@ Matrix operator*(double scalar, const Matrix& matrix)
 {
     return matrix * scalar;
 }
+
+Matrix HadamardProduct(const Matrix& left, const Matrix& right)
+{
+    if (left.Rows() != right.Rows() || left.Cols() != right.Cols()) {
+        throw std::invalid_argument("Matrix dimensions must match for elementwise multiplication");
+    }
+
+    Matrix result(left.Rows(), left.Cols());
+
+    for (size_t i = 0; i < left.Rows() * left.Cols(); i++) {
+        result[i] = left[i] * right[i];
+    }
+
+    return result;
+}

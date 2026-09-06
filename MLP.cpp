@@ -76,9 +76,7 @@ void MLP::Train(const std::vector<Matrix>& inputs,
             activations.push_back(inputs[sample]);
 
             for (size_t layer = 0; layer < m_Weights.size(); layer++) {
-                Matrix preActivation = m_Weights[layer] * activations.back();
-                preActivation += m_Biases[layer];
-                activations.push_back(Sigmoid(preActivation));
+                activations.push_back(Sigmoid(m_Weights[layer] * activations.back() + m_Biases[layer]));
             }
 
             size_t outputLayer = m_Weights.size() - 1;
@@ -95,30 +93,13 @@ void MLP::Train(const std::vector<Matrix>& inputs,
 
             for (size_t layer = 0; layer < m_Weights.size(); layer++) {
                 Matrix weightGradient = deltas[layer] * activations[layer].Transpose();
-                weightGradient *= learningRate;
-                m_Weights[layer] -= weightGradient;
-                deltas[layer] *= learningRate;
-                m_Biases[layer] -= deltas[layer];
+                m_Weights[layer] -= learningRate * weightGradient;
+                m_Biases[layer] -= learningRate * deltas[layer];
             }
 
             activations.clear();
         }
     }
-}
-
-Matrix MLP::HadamardProduct(const Matrix& left, const Matrix& right)
-{
-    if (left.Rows() != right.Rows() || left.Cols() != right.Cols()) {
-        throw std::invalid_argument("Matrix dimensions must match for elementwise multiplication");
-    }
-
-    Matrix result(left.Rows(), left.Cols());
-
-    for (size_t i = 0; i < left.Rows() * left.Cols(); i++) {
-        result[i] = left[i] * right[i];
-    }
-
-    return result;
 }
 
 void MLP::ValidateInput(const Matrix& input) const

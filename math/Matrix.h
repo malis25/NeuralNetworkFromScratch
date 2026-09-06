@@ -40,5 +40,6 @@ private:
     std::vector<double> m_Data;
 };
 
-
 Matrix operator*(double scalar, const Matrix& matrix);
+
+Matrix HadamardProduct(const Matrix& left, const Matrix& right);

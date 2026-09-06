@@ -20,6 +20,5 @@ private:
     std::vector<Matrix> m_Weights;
     std::vector<Matrix> m_Biases;
 
-    static Matrix HadamardProduct(const Matrix& left, const Matrix& right);
     void ValidateInput(const Matrix& input) const;
 };
