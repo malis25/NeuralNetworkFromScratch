@@ -20,7 +20,9 @@ MLP::MLP(const std::vector<size_t>& layerSizes)
 
         m_Weights.emplace_back(layerSizes[layer + 1], layerSizes[layer]);
         m_Weights.back().Randomize();
+
         m_Biases.emplace_back(layerSizes[layer + 1], 1);
+        m_Biases.back().Randomize();
     }
 }
 
@@ -35,7 +37,7 @@ Matrix MLP::Predict(const Matrix& input) const
 
     Matrix activation = input;
     for (size_t layer = 0; layer < m_Weights.size(); layer++) {
-        activation = Sigmoid((m_Weights[layer] * activation) + m_Biases[layer]);
+        activation = ReLU((m_Weights[layer] * activation) + m_Biases[layer]);
     }
 
     return activation;
@@ -51,7 +53,7 @@ void MLP::Train(const std::vector<Matrix>& inputs,
 
     activations.reserve(m_Weights.size() + 1);
     deltas.reserve(m_Weights.size());
-
+    
     for (const Matrix& weights : m_Weights) {
         deltas.emplace_back(weights.Rows(), 1);
     }
@@ -76,19 +78,19 @@ void MLP::Train(const std::vector<Matrix>& inputs,
             activations.push_back(inputs[sample]);
 
             for (size_t layer = 0; layer < m_Weights.size(); layer++) {
-                activations.push_back(Sigmoid(m_Weights[layer] * activations.back() + m_Biases[layer]));
+                activations.push_back(ReLU(m_Weights[layer] * activations.back() + m_Biases[layer]));
             }
 
             size_t outputLayer = m_Weights.size() - 1;
-            
+
             deltas[outputLayer] = HadamardProduct(
                 activations.back() - targets[sample],
-                SigmoidDerivativeFromActivation(activations.back()));
+                ReLUDerivativeFromActivation(activations.back()));
 
             for (size_t layer = outputLayer; layer > 0; layer--) {
                 deltas[layer - 1] = HadamardProduct(
                     m_Weights[layer].Transpose() * deltas[layer],
-                    SigmoidDerivativeFromActivation(activations[layer]));
+                    ReLUDerivativeFromActivation(activations[layer]));
             }
 
             for (size_t layer = 0; layer < m_Weights.size(); layer++) {

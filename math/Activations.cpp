@@ -1,4 +1,5 @@
 #include <cmath>
+#include <algorithm>
 #include <math/Activations.h>
 
 double Sigmoid(double x) {
@@ -39,4 +40,41 @@ Matrix SigmoidDerivativeFromActivation(const Matrix& activation) {
     }
 
     return result;
+}
+
+double ReLU(double x)
+{
+    return std::max(0.0, x);
+}
+
+double ReLUDerivative(double x)
+{
+    return x > 0 ? 1 : 0;
+}
+
+Matrix ReLU(const Matrix& matrix)
+{
+    Matrix result = matrix;
+
+    for (size_t i = 0; i < result.Rows() * result.Cols(); i++) {
+        result[i] = ReLU(result[i]);
+    }
+
+    return result;
+}
+
+Matrix ReLUDerivative(const Matrix& matrix)
+{
+    Matrix result = matrix;
+
+    for (size_t i = 0; i < result.Rows() * result.Cols(); i++) {
+        result[i] = ReLUDerivative(result[i]);
+    }
+
+    return result;
+}
+
+Matrix ReLUDerivativeFromActivation(const Matrix& matrix)
+{
+    return ReLUDerivative(matrix);
 }
