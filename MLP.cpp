@@ -37,7 +37,8 @@ Matrix MLP::Predict(const Matrix& input) const
 
     Matrix activation = input;
     for (size_t layer = 0; layer < m_Weights.size(); layer++) {
-        activation = ReLU((m_Weights[layer] * activation) + m_Biases[layer]);
+        activation = (m_Weights[layer] * activation) + m_Biases[layer];
+        activation = layer + 1 == m_Weights.size() ? Sigmoid(activation) : ReLU(activation);
     }
 
     return activation;
@@ -78,14 +79,16 @@ void MLP::Train(const std::vector<Matrix>& inputs,
             activations.push_back(inputs[sample]);
 
             for (size_t layer = 0; layer < m_Weights.size(); layer++) {
-                activations.push_back(ReLU(m_Weights[layer] * activations.back() + m_Biases[layer]));
+                Matrix activation = m_Weights[layer] * activations.back() + m_Biases[layer];
+                activations.push_back(
+                    layer + 1 == m_Weights.size() ? Sigmoid(activation) : ReLU(activation));
             }
 
             size_t outputLayer = m_Weights.size() - 1;
 
             deltas[outputLayer] = HadamardProduct(
                 activations.back() - targets[sample],
-                ReLUDerivativeFromActivation(activations.back()));
+                SigmoidDerivativeFromActivation(activations.back()));
 
             for (size_t layer = outputLayer; layer > 0; layer--) {
                 deltas[layer - 1] = HadamardProduct(
