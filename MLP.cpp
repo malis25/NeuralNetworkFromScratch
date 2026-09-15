@@ -1,5 +1,6 @@
 #include <cmath>
 #include <stdexcept>
+#include <fstream>
 
 #include <math/Activations.h>
 #include <MLP.h>
@@ -49,6 +50,7 @@ void MLP::Train(const std::vector<Matrix>& inputs,
                 size_t epochs,
                 double learningRate)
 {
+    std::vector<double> lossHistory;
     std::vector<Matrix> activations;
     std::vector<Matrix> deltas;
 
@@ -89,7 +91,7 @@ void MLP::Train(const std::vector<Matrix>& inputs,
             deltas[outputLayer] = HadamardProduct(
                 activations.back() - targets[sample],
                 SigmoidDerivativeFromActivation(activations.back()));
-
+            
             for (size_t layer = outputLayer; layer > 0; layer--) {
                 deltas[layer - 1] = HadamardProduct(
                     m_Weights[layer].Transpose() * deltas[layer],
@@ -104,6 +106,21 @@ void MLP::Train(const std::vector<Matrix>& inputs,
 
             activations.clear();
         }
+
+        double loss = 0;
+
+        for (size_t sample = 0; sample < inputs.size(); sample++) {
+            loss += ((Predict(inputs[sample])[0] - targets[sample][0]) * (Predict(inputs[sample])[0] - targets[sample][0])) / 2.0;
+        }
+
+        lossHistory.push_back(loss);
+    }
+
+    std::ofstream file("loss.csv");
+
+    for (size_t i = 0; i < lossHistory.size(); ++i)
+    {
+        file << i << "," << lossHistory[i] << "\n";
     }
 }
 
