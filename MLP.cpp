@@ -53,12 +53,18 @@ void MLP::Train(const std::vector<Matrix>& inputs,
     std::vector<double> lossHistory;
     std::vector<Matrix> activations;
     std::vector<Matrix> deltas;
+    std::vector<Matrix> weightVelocity;
+    std::vector<Matrix> biasVelocity;
 
     activations.reserve(m_Weights.size() + 1);
     deltas.reserve(m_Weights.size());
+    weightVelocity.reserve(m_Weights.size());
+    biasVelocity.reserve(m_Weights.size());
     
     for (const Matrix& weights : m_Weights) {
         deltas.emplace_back(weights.Rows(), 1);
+        biasVelocity.emplace_back(weights.Rows(), 1);
+        weightVelocity.emplace_back(weights.Rows(), weights.Cols());
     }
 
     if (inputs.empty() || inputs.size() != targets.size()) {
@@ -100,8 +106,15 @@ void MLP::Train(const std::vector<Matrix>& inputs,
 
             for (size_t layer = 0; layer < m_Weights.size(); layer++) {
                 Matrix weightGradient = deltas[layer] * activations[layer].Transpose();
-                m_Weights[layer] -= learningRate * weightGradient;
-                m_Biases[layer] -= learningRate * deltas[layer];
+
+                weightVelocity[layer] *= 0.99;
+                weightVelocity[layer] -= learningRate * weightGradient;
+
+                biasVelocity[layer] *= 0.99;
+                biasVelocity[layer] -= learningRate * deltas[layer];
+
+                m_Weights[layer] += weightVelocity[layer];
+                m_Biases[layer] += biasVelocity[layer];
             }
 
             activations.clear();

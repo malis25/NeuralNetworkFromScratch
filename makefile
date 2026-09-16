@@ -17,4 +17,4 @@ run: build
 	./main.exe
 
 clean:
-	del /Q Matrix.o Activations.o MLP.o main.o main.exe 2>NUL || exit 0
+	del /Q loss.csv Matrix.o Activations.o MLP.o main.o main.exe 2>NUL || exit 0
