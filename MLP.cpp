@@ -38,7 +38,8 @@ Matrix MLP::Predict(const Matrix& input) const
 
     Matrix activation = input;
     for (size_t layer = 0; layer < m_Weights.size(); layer++) {
-        activation = (m_Weights[layer] * activation) + m_Biases[layer];
+        activation = m_Weights[layer] * activation;
+        activation += m_Biases[layer];
         activation = layer + 1 == m_Weights.size() ? Sigmoid(activation) : ReLU(activation);
     }
 
@@ -60,6 +61,7 @@ void MLP::Train(const std::vector<Matrix>& inputs,
     deltas.reserve(m_Weights.size());
     weightVelocity.reserve(m_Weights.size());
     biasVelocity.reserve(m_Weights.size());
+    lossHistory.reserve(epochs);
     
     for (const Matrix& weights : m_Weights) {
         deltas.emplace_back(weights.Rows(), 1);
@@ -87,7 +89,8 @@ void MLP::Train(const std::vector<Matrix>& inputs,
             activations.push_back(inputs[sample]);
 
             for (size_t layer = 0; layer < m_Weights.size(); layer++) {
-                Matrix activation = m_Weights[layer] * activations.back() + m_Biases[layer];
+                Matrix activation = m_Weights[layer] * activations.back();
+                activation += m_Biases[layer];
                 activations.push_back(
                     layer + 1 == m_Weights.size() ? Sigmoid(activation) : ReLU(activation));
             }
@@ -100,7 +103,7 @@ void MLP::Train(const std::vector<Matrix>& inputs,
             
             for (size_t layer = outputLayer; layer > 0; layer--) {
                 deltas[layer - 1] = HadamardProduct(
-                    m_Weights[layer].Transpose() * deltas[layer],
+                    m_Weights[layer].TransposeMultiply(deltas[layer]),
                     ReLUDerivativeFromActivation(activations[layer]));
             }
 
@@ -123,7 +126,9 @@ void MLP::Train(const std::vector<Matrix>& inputs,
         double loss = 0;
 
         for (size_t sample = 0; sample < inputs.size(); sample++) {
-            loss += ((Predict(inputs[sample])[0] - targets[sample][0]) * (Predict(inputs[sample])[0] - targets[sample][0])) / 2.0;
+            const Matrix prediction = Predict(inputs[sample]);
+            const double error = prediction[0] - targets[sample][0];
+            loss += (error * error) / 2.0;
         }
 
         lossHistory.push_back(loss);

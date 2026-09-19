@@ -1,5 +1,6 @@
 #include <math/Matrix.h>
 #include <random>
+#include <stdexcept>
 
 Matrix::Matrix(size_t rows, size_t cols)
     : m_Rows(rows), m_Cols(cols), m_Data(rows * cols, 0.0)
@@ -75,6 +76,27 @@ Matrix Matrix::operator*(const Matrix& other) const
     for (size_t i = 0; i < m_Rows; i++) {
         for (size_t k = 0; k < m_Cols; k++) {
             const double left = m_Data[i * m_Cols + k];
+            for (size_t j = 0; j < other.m_Cols; j++) {
+                result.m_Data[i * other.m_Cols + j] +=
+                    left * other.m_Data[k * other.m_Cols + j];
+            }
+        }
+    }
+
+    return result;
+}
+
+Matrix Matrix::TransposeMultiply(const Matrix& other) const
+{
+    if (m_Rows != other.m_Rows) {
+        throw std::invalid_argument("Matrix dimensions must match for transpose multiplication");
+    }
+
+    Matrix result(m_Cols, other.m_Cols);
+
+    for (size_t i = 0; i < m_Cols; i++) {
+        for (size_t k = 0; k < m_Rows; k++) {
+            const double left = m_Data[k * m_Cols + i];
             for (size_t j = 0; j < other.m_Cols; j++) {
                 result.m_Data[i * other.m_Cols + j] +=
                     left * other.m_Data[k * other.m_Cols + j];

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <vector>
 
 class Matrix {
@@ -21,6 +20,7 @@ public:
     Matrix operator+(const Matrix& other) const;
     Matrix operator-(const Matrix& other) const;
     Matrix operator*(const Matrix& other) const;
+    Matrix TransposeMultiply(const Matrix& other) const;
 
     Matrix operator*(double scalar) const;
 
