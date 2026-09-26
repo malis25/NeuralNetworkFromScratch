@@ -75,6 +75,5 @@ private:
 };
 
 Tensor operator*(double scalar, const Tensor& tensor);
-Tensor operator+(double scalar, const Tensor& tensor);
 Tensor Matmul(const Tensor& a, const Tensor& b);
 std::ostream& operator<<(std::ostream& os, const Tensor& tensor);
