@@ -2,42 +2,44 @@
 #include <algorithm>
 #include <math/Activations.h>
 
-double Sigmoid(double x) {
+double Sigmoid(double x)
+{
     return 1.0 / (1.0 + std::exp(-x));
 }
 
-double SigmoidDerivative(double x) {
+double SigmoidDerivative(double x)
+{
     double sigmoidValue = Sigmoid(x);
     
     return sigmoidValue * (1.0 - sigmoidValue);
 }
 
-Matrix Sigmoid(const Matrix& matrix) {
-    Matrix result = matrix;
+Tensor Sigmoid(const Tensor& tensor)
+{
+    Tensor result = tensor;
 
-    for (size_t i = 0; i < result.Rows() * result.Cols(); i++) {
+    for (size_t i = 0; i < result.Size(); i++)
         result[i] = Sigmoid(result[i]);
-    }
-
+    
     return result;
 }
 
-Matrix SigmoidDerivative(const Matrix& matrix) {
-    Matrix result = matrix;
+Tensor SigmoidDerivative(const Tensor& tensor)
+{
+    Tensor result = tensor;
 
-    for (size_t i = 0; i < result.Rows() * result.Cols(); i++) {
+    for (size_t i = 0; i < result.Size(); i++)
         result[i] = SigmoidDerivative(result[i]);
-    }
-
+    
     return result;
 }
 
-Matrix SigmoidDerivativeFromActivation(const Matrix& activation) {
-    Matrix result = activation;
+Tensor SigmoidDerivativeFromActivation(const Tensor& activation)
+{
+    Tensor result = activation;
 
-    for (size_t i = 0; i < result.Rows() * result.Cols(); i++) {
+    for (size_t i = 0; i < result.Size(); i++)
         result[i] *= 1.0 - result[i];
-    }
 
     return result;
 }
@@ -52,29 +54,27 @@ double ReLUDerivative(double x)
     return x > 0 ? 1 : 0;
 }
 
-Matrix ReLU(const Matrix& matrix)
+Tensor ReLU(const Tensor& tensor)
 {
-    Matrix result = matrix;
+    Tensor result = tensor;
 
-    for (size_t i = 0; i < result.Rows() * result.Cols(); i++) {
+    for (size_t i = 0; i < result.Size(); i++)
         result[i] = ReLU(result[i]);
-    }
 
     return result;
 }
 
-Matrix ReLUDerivative(const Matrix& matrix)
+Tensor ReLUDerivative(const Tensor& tensor)
 {
-    Matrix result = matrix;
+    Tensor result = tensor;
 
-    for (size_t i = 0; i < result.Rows() * result.Cols(); i++) {
+    for (size_t i = 0; i < result.Size(); i++)
         result[i] = ReLUDerivative(result[i]);
-    }
 
     return result;
 }
 
-Matrix ReLUDerivativeFromActivation(const Matrix& matrix)
+Tensor ReLUDerivativeFromActivation(const Tensor& tensor)
 {
-    return ReLUDerivative(matrix);
+    return ReLUDerivative(tensor);
 }
