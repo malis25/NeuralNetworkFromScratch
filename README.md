@@ -1,43 +1,171 @@
-# Neural Network From Scratch (C++)
+# Neural Network From Scratch
 
-A neural network implementation written entirely in C++ without using external machine learning frameworks.
+A neural network implementation written from scratch in **C++**, without relying on external machine learning frameworks.
 
-## Purpose
+The project focuses on implementing the fundamental building blocks of a neural network manually, from tensor operations to forward propagation, backpropagation, and training.
 
-The goal of this project is to understand and implement the mathematical foundations of neural networks from scratch, including forward propagation, backpropagation, and gradient-based optimization.
+## Overview
 
-## Mathematical Basis
+**NeuralNetworkFromScratch** is a low-level neural network project built to explore how neural networks work internally.
 
-For each layer:
+Instead of using an existing machine learning framework, the project implements its own numerical and neural-network components. This provides direct control over the data structures, mathematical operations, and training process.
 
-$$
-Z = Wx + b
-$$
+The current implementation uses a **Multilayer Perceptron (MLP)** and demonstrates it by training on the XOR problem.
 
-$$
-A = f(Z)
-$$
+## Features
 
-The network learns by minimizing a loss function and updating weights through backpropagation and gradient descent.
-
-## Current Features
-
-* Matrix operations
-* Dense layers
+* Custom `Tensor` implementation
+* Matrix multiplication
+* Tensor operations
+* Element-wise operations
+* Scalar operations
+* Transpose operations
+* Activation functions
+* Multilayer Perceptron
 * Forward propagation
 * Backpropagation
-* Gradient descent training
-* Modular architecture
+* Parameter updates
+* Training loop
+* Benchmarks and tests
 
-## Future Plans
+## Architecture
 
-* Additional activation functions
-* Advanced optimizers (Adam, RMSProp)
-* Model serialization
-* Multi-threading
-* GPU acceleration
-* CNN and Transformer experiments
+The project is built around a few core components:
 
-## Motivation
+```text
+NeuralNetworkFromScratch/
+│
+├── math/
+│   ├── Tensor.h
+│   ├── Tensor.cpp
+│   ├── Activations.h
+│   └── Activations.cpp
+│
+├── test/
+│   └── ...
+│
+├── MLP.h
+├── MLP.cpp
+├── main.cpp
+├── graph.py
+└── makefile
+```
 
-This project is primarily a learning and research exercise aimed at gaining a deeper understanding of how modern neural networks operate internally, beyond the abstractions provided by high-level frameworks.
+### Tensor
+
+`Tensor` is the numerical foundation of the project.
+
+It provides the data structure and operations used by the neural network, including:
+
+* Shape management
+* Element access
+* Element-wise arithmetic
+* Scalar operations
+* Matrix multiplication
+* Transposition
+* Other low-level tensor operations
+
+The neural network uses this component for its numerical computations.
+
+### Activations
+
+The activation module contains the activation functions used by the neural network along with their derivatives.
+
+These functions are used during both forward propagation and backpropagation.
+
+### MLP
+
+`MLP` implements the neural network itself on top of the tensor system.
+
+It handles:
+
+* Network initialization
+* Forward propagation
+* Backpropagation
+* Gradient calculation
+* Parameter updates
+* Training
+
+## Example
+
+The current example uses an MLP with the following architecture:
+
+```text
+Input
+  │
+  ▼
+[ 2 neurons ]
+  │
+  ▼
+[ 4 neurons ]
+  │
+  ▼
+[ 1 neuron ]
+  │
+  ▼
+Output
+```
+
+The network is trained to learn the XOR function:
+
+```text
+0 XOR 0 → 0
+0 XOR 1 → 1
+1 XOR 0 → 1
+1 XOR 1 → 0
+```
+
+## Building
+
+### Requirements
+
+* C++17 compatible compiler
+* GNU Make
+
+### Build
+
+```bash
+make
+```
+
+### Run
+
+On Linux:
+
+```bash
+./main
+```
+
+On Windows with a compatible MinGW environment:
+
+```bash
+main.exe
+```
+
+## Project Structure
+
+| Component     | Description                                |
+| ------------- | ------------------------------------------ |
+| `Tensor`      | Core tensor and numerical operations       |
+| `Activations` | Activation functions and their derivatives |
+| `MLP`         | Multilayer Perceptron implementation       |
+| `main.cpp`    | Example program and training entry point   |
+| `test/`       | Tests and benchmarks                       |
+| `graph.py`    | Graphing and visualization utility         |
+| `makefile`    | Build configuration                        |
+
+## Philosophy
+
+The goal of this project is to understand neural networks by implementing their fundamental components directly.
+
+Modern machine learning frameworks provide powerful abstractions, but they can hide many of the operations happening underneath.
+
+This project takes a lower-level approach:
+
+> Understand the fundamentals by building them yourself.
+
+The neural network is built on top of the custom tensor implementation, keeping the relationship between the numerical operations and the higher-level model explicit.
+
+## License
+
+See the repository for license information.
