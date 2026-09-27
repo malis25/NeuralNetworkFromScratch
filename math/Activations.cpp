@@ -1,6 +1,11 @@
 #include <cmath>
-#include <algorithm>
 #include <math/Activations.h>
+
+namespace {
+
+constexpr double leakyReLUSlope = 0.01;
+
+}
 
 double Sigmoid(double x)
 {
@@ -44,37 +49,62 @@ Tensor SigmoidDerivativeFromActivation(const Tensor& activation)
     return result;
 }
 
+double LeakyReLU(double x)
+{
+    return x > 0.0 ? x : leakyReLUSlope * x;
+}
+
+double LeakyReLUDerivative(double x)
+{
+    return x > 0.0 ? 1.0 : leakyReLUSlope;
+}
+
+Tensor LeakyReLU(const Tensor& tensor)
+{
+    Tensor result = tensor;
+
+    for (size_t i = 0; i < result.Size(); i++)
+        result[i] = LeakyReLU(result[i]);
+
+    return result;
+}
+
+Tensor LeakyReLUDerivative(const Tensor& tensor)
+{
+    Tensor result = tensor;
+
+    for (size_t i = 0; i < result.Size(); i++)
+        result[i] = LeakyReLUDerivative(result[i]);
+
+    return result;
+}
+
+Tensor LeakyReLUDerivativeFromActivation(const Tensor& activation)
+{
+    return LeakyReLUDerivative(activation);
+}
+
 double ReLU(double x)
 {
-    return std::max(0.0, x);
+    return LeakyReLU(x);
 }
 
 double ReLUDerivative(double x)
 {
-    return x > 0 ? 1 : 0;
+    return LeakyReLUDerivative(x);
 }
 
 Tensor ReLU(const Tensor& tensor)
 {
-    Tensor result = tensor;
-
-    for (size_t i = 0; i < result.Size(); i++)
-        result[i] = ReLU(result[i]);
-
-    return result;
+    return LeakyReLU(tensor);
 }
 
 Tensor ReLUDerivative(const Tensor& tensor)
 {
-    Tensor result = tensor;
-
-    for (size_t i = 0; i < result.Size(); i++)
-        result[i] = ReLUDerivative(result[i]);
-
-    return result;
+    return LeakyReLUDerivative(tensor);
 }
 
-Tensor ReLUDerivativeFromActivation(const Tensor& tensor)
+Tensor ReLUDerivativeFromActivation(const Tensor& activation)
 {
-    return ReLUDerivative(tensor);
+    return LeakyReLUDerivativeFromActivation(activation);
 }

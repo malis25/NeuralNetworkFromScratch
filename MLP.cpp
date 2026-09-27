@@ -38,7 +38,7 @@ Tensor MLP::Predict(const Tensor& input) const
 
     for (size_t layer = 0; layer < m_Weights.size(); layer++) {
         activation = Matmul(m_Weights[layer], activation) + m_Biases[layer];
-        activation = layer + 1 == m_Weights.size() ? Sigmoid(activation) : ReLU(activation);
+        activation = layer + 1 == m_Weights.size() ? Sigmoid(activation) : LeakyReLU(activation);
     }
 
     return activation;
@@ -86,7 +86,7 @@ void MLP::Train(const std::vector<Tensor>& inputs,
             for (size_t layer = 0; layer < m_Weights.size(); layer++) {
                 Tensor activation = Matmul(m_Weights[layer], activations.back()) + m_Biases[layer];
                 activations.push_back(
-                    layer + 1 == m_Weights.size() ? Sigmoid(activation) : ReLU(activation));
+                    layer + 1 == m_Weights.size() ? Sigmoid(activation) : LeakyReLU(activation));
             }
 
             size_t outputLayer = m_Weights.size() - 1;
@@ -96,7 +96,7 @@ void MLP::Train(const std::vector<Tensor>& inputs,
             for (size_t layer = outputLayer; layer > 0; layer--) {
                 deltas[layer - 1] = Matmul(
                     m_Weights[layer].Transpose(),
-                    deltas[layer]) * ReLUDerivativeFromActivation(activations[layer]
+                    deltas[layer]) * LeakyReLUDerivativeFromActivation(activations[layer]
                     );
             }
 
