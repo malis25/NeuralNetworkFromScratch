@@ -2,7 +2,7 @@ INCLUDE_DIR = ./
 CXX = g++
 CXXFLAGS = -I$(INCLUDE_DIR) -O3 -Wall -Wextra -std=c++17
 
-.PHONY: all build run clean
+.PHONY: all build run test clean
 
 all: build
 
@@ -16,5 +16,9 @@ build:
 run: build
 	./main.exe
 
+test:
+	$(CXX) $(CXXFLAGS) math/Tensor.cpp test/TensorTests.cpp -o TensorTests.exe
+	./TensorTests.exe
+
 clean:
-	del /Q loss.csv Matrix.o Tensor.o Activations.o MLP.o main.o main.exe 2>NUL || exit 0
+	del /Q loss.csv Matrix.o Tensor.o Activations.o MLP.o main.o main.exe TensorTests.exe 2>NUL || exit 0

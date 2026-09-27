@@ -66,7 +66,6 @@ void MLP::Train(const std::vector<Tensor>& inputs,
         weightVelocity.emplace_back(Tensor{weights.Shape()[0], weights.Shape()[1]});
     }
 
-
     if (inputs.empty() || inputs.size() != targets.size())
         throw std::invalid_argument("Inputs and targets must contain the same non-zero number of samples");
 
