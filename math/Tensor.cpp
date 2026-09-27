@@ -281,18 +281,22 @@ Tensor Matmul(const Tensor& a, const Tensor& b)
     if (a.m_Shape[1] != b.m_Shape[0])
         throw std::invalid_argument("Tensor dimensions mismatch for Matmul");
 
-    size_t M = a.m_Shape[0];
-    size_t K = a.m_Shape[1];
-    size_t N = b.m_Shape[1];
+    const size_t M = a.m_Shape[0];
+    const size_t K = a.m_Shape[1];
+    const size_t N = b.m_Shape[1];
 
     Tensor result({M, N}, 0.0);
 
-    for (size_t i = 0; i < M; i++) {
-        for (size_t k = 0; k < K; k++) {
-            double left = a({i, k});
+    const double* A = a.RawData();
+    const double* B = b.RawData();
+    double* C = result.RawData();
 
-            for (size_t j = 0; j < N; j++) {
-                result({i, j}) += left * b({k, j});
+    for (size_t i = 0; i < M; ++i) {
+        for (size_t k = 0; k < K; ++k) {
+            const double aik = A[i * K + k];
+
+            for (size_t j = 0; j < N; ++j) {
+                C[i * N + j] += aik * B[k * N + j];
             }
         }
     }

@@ -2,7 +2,7 @@ INCLUDE_DIR = ./
 CXX = g++
 CXXFLAGS = -I$(INCLUDE_DIR) -O3 -Wall -Wextra -std=c++17
 
-.PHONY: all build run test clean
+.PHONY: all build run test benchmark clean
 
 all: build
 
