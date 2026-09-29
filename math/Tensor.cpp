@@ -207,7 +207,7 @@ Tensor& Tensor::operator/=(double scalar)
 
 void Tensor::Reshape(const std::vector<size_t>& newShape)
 {
-    size_t newSize = 1;
+    size_t newSize = newShape.empty() ? 0 : 1;
     for (size_t dim : newShape)
         newSize *= dim;
 
